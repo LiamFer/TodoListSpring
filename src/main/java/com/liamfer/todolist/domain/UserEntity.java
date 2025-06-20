@@ -25,6 +25,13 @@ public class UserEntity implements UserDetails {
     public String password;
     public UserRole role;
 
+    public UserEntity(String name, String email, String password, UserRole role){
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(role.equals(UserRole.ADMIN)) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"),new SimpleGrantedAuthority("ROLE_USER"));
