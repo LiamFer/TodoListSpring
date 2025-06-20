@@ -2,6 +2,7 @@ package com.liamfer.todolist.controller;
 
 import com.liamfer.todolist.domain.UserDTO;
 import com.liamfer.todolist.domain.UserEntity;
+import com.liamfer.todolist.infra.security.TokenService;
 import com.liamfer.todolist.service.AuthorizationService;
 import com.liamfer.todolist.service.UserService;
 import jakarta.validation.Valid;
@@ -18,11 +19,13 @@ public class UserController {
     private UserService service;
     private AuthenticationManager authenticationManager;
     private AuthorizationService authorizationService;
+    private TokenService tokenService;
 
-    public UserController(UserService service, AuthenticationManager authenticationManager, AuthorizationService authorizationService) {
+    public UserController(UserService service, AuthenticationManager authenticationManager, AuthorizationService authorizationService, TokenService tokenService) {
         this.service = service;
         this.authenticationManager = authenticationManager;
         this.authorizationService = authorizationService;
+        this.tokenService = tokenService;
     }
 
     @GetMapping("/test")
@@ -31,10 +34,11 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDTO> login(@RequestBody @Valid UserDTO data){
+    public ResponseEntity<String> login(@RequestBody @Valid UserDTO data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(),data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
-        return ResponseEntity.ok().build();
+        String token = tokenService.generateToken((UserEntity) auth.getPrincipal());
+        return ResponseEntity.status(HttpStatus.OK).body(token);
     }
 
     @PostMapping("/register")

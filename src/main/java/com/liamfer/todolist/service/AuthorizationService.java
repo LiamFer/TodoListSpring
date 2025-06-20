@@ -5,6 +5,7 @@ import com.liamfer.todolist.domain.UserEntity;
 import com.liamfer.todolist.domain.UserRole;
 import com.liamfer.todolist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
