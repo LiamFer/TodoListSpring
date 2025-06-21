@@ -21,6 +21,7 @@ Este projeto tem como objetivo construir uma API completa para gerenciamento de 
 - Tratamento de erros
 - Boas práticas de segurança
 - Paginação e filtragem de dados
+- Spring Security (JWT)
 
 ---
 
