@@ -1,5 +1,6 @@
 package com.liamfer.todolist.controller;
 
+import com.liamfer.todolist.domain.TokenResponseDTO;
 import com.liamfer.todolist.domain.UserDTO;
 import com.liamfer.todolist.domain.UserEntity;
 import com.liamfer.todolist.infra.security.TokenService;
@@ -34,11 +35,15 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid UserDTO data){
+    public ResponseEntity<?> login(@RequestBody @Valid UserDTO data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(),data.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
-        String token = tokenService.generateToken((UserEntity) auth.getPrincipal());
-        return ResponseEntity.status(HttpStatus.OK).body(token);
+        try{
+            var auth = this.authenticationManager.authenticate(usernamePassword);
+            String token = tokenService.generateToken((UserEntity) auth.getPrincipal());
+            return ResponseEntity.status(HttpStatus.OK).body(new TokenResponseDTO(token));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Credentials");
+        }
     }
 
     @PostMapping("/register")

@@ -27,7 +27,7 @@ public class AuthorizationService implements UserDetailsService {
     }
 
     public Optional<UserEntity> registerUser(UserDTO user){
-        if(repository.findByEmail(user.email()) != null) return null;
+        if(repository.findByEmail(user.email()) != null) return Optional.empty();
         String hashedPassword = passwordEncoder.encode(user.password());
         return Optional.of(repository.save(new UserEntity(user.name(),user.email(), hashedPassword, UserRole.USER)));
     }

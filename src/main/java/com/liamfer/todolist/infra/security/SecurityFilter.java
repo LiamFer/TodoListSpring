@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,13 +28,19 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = recoverToken(request);
-        if(token != null){
-            String subject = service.validateToken(token);
-            UserDetails user = repository.findByEmail(subject);
-            var authentication = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try{
+            if(token != null){
+                String subject = service.validateToken(token);
+                if (subject.isBlank()) throw new RuntimeException("Unauthorized Token");
+                UserDetails user = repository.findByEmail(subject);
+                var authentication = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            filterChain.doFilter(request,response);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\\\"message\\\": \\\"Unauthorized\\\"}");
         }
-        filterChain.doFilter(request,response);
     }
 
     private String recoverToken(HttpServletRequest request){
