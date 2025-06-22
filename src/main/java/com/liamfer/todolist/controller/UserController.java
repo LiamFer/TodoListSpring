@@ -47,10 +47,10 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserEntity> register(@RequestBody @Valid UserDTO user){
+    public ResponseEntity<String> register(@RequestBody @Valid UserDTO user){
         Optional<UserEntity> newUser = authorizationService.registerUser(user);
         if(newUser.isEmpty()) return ResponseEntity.badRequest().build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser.get());
+        return ResponseEntity.status(HttpStatus.CREATED).body("User Created");
     }
 
 }

@@ -1,10 +1,10 @@
 package com.liamfer.todolist.repository;
 
-import com.liamfer.todolist.domain.UserEntity;
+import com.liamfer.todolist.domain.TaskEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity,String> {
-    UserEntity findByEmail(String email);
+public interface TaskRepository extends JpaRepository<TaskEntity,Long> {
 }

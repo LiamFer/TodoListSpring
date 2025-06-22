@@ -1,16 +1,29 @@
 package com.liamfer.todolist.controller;
 
+import com.liamfer.todolist.domain.TaskDTO;
+import com.liamfer.todolist.domain.TaskEntity;
+import com.liamfer.todolist.service.TaskService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/todos")
 public class TaskController {
+    private TaskService service;
+    public TaskController(TaskService service) {
+        this.service = service;
+    }
 
     @PostMapping
-    public ResponseEntity<?> createTask(){
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> createTask(@RequestBody @Valid TaskDTO task, @AuthenticationPrincipal UserDetails user){
+        TaskDTO createdTask = service.createTask(task,user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
     }
 }
