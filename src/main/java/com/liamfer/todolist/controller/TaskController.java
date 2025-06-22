@@ -4,6 +4,8 @@ import com.liamfer.todolist.domain.TaskDTO;
 import com.liamfer.todolist.domain.TaskEntity;
 import com.liamfer.todolist.service.TaskService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +20,11 @@ public class TaskController {
     private TaskService service;
     public TaskController(TaskService service) {
         this.service = service;
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<TaskDTO>> getTasks(@AuthenticationPrincipal UserDetails user, Pageable pageable){
+        return ResponseEntity.status(HttpStatus.OK).body(service.getUserTasks(user,pageable));
     }
 
     @PostMapping

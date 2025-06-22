@@ -5,10 +5,13 @@ import com.liamfer.todolist.domain.TaskEntity;
 import com.liamfer.todolist.domain.UserEntity;
 import com.liamfer.todolist.repository.TaskRepository;
 import com.liamfer.todolist.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,6 +22,11 @@ public class TaskService {
     public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+    }
+
+    public Page<TaskDTO> getUserTasks(UserDetails user, Pageable pageable){
+        UserEntity userData = userRepository.findByEmail(user.getUsername());
+        return taskRepository.findAllByUserId(userData.id,pageable).map(task -> new TaskDTO(task.id, task.title, task.description));
     }
 
     public TaskDTO createTask(TaskDTO task, UserDetails user){
